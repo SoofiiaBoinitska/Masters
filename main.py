@@ -131,7 +131,7 @@ def determine_p_P(series, s=12, max_lags=20):
     # Determine p from the PACF
     p = 0
     for i in range(1, s):  # we are excluding the zero lag
-        if pacf_vals[i] > 0.2:  # arbitrary threshold, adjust as needed
+        if pacf_vals[i] > 0.2: 
             p = i
         else:
             break
@@ -139,7 +139,7 @@ def determine_p_P(series, s=12, max_lags=20):
     # Determine P from the PACF at seasonal lags
     P = 0
     for i in range(s, max_lags, s):
-        if pacf_vals[i] > 0.2:  # arbitrary threshold, adjust as needed
+        if pacf_vals[i] > 0.2:  
             P = i // s
         else:
             break
@@ -362,7 +362,7 @@ def non_linear_dependencies(data):
 
     residuals = y - predicted
 
-    threshold = np.std(data) * 0.5  # This is arbitrary and might need adjustments based on specific datasets
+    threshold = np.std(data) * 0.5  
     if np.std(residuals) > threshold:
         return True
 
