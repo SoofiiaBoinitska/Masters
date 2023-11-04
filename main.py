@@ -959,7 +959,7 @@ class TimeSeriesAnalyzer:
                 for feature, value in self.features.items():
                     if value:
                         st.write(f"{feature}")
-
+            results_df = pd.DataFrame(columns=['model_name', 'R^2', 'SUM(e(k)^2)', 'DW', 'MSE', 'RMSE', 'MAE', 'U', 'model_object'])
             st.subheader("\nSelecting Potential Models...")
             potential_models = self.select_models()
             st.markdown("**Selected Models:**")
