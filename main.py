@@ -528,10 +528,12 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         test_pred_normalized = result.predict(X_test_normalized)
 
         #residuals = train_true[target_col] - train_pred_normalized #new 11:30
-        residuals = X_train_normalized - train_pred_normalized
+        #residuals = X_train_normalized - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true[target_col])
         test_pred = minmax_rev(test_pred_normalized, train_true[target_col])
+
+        residuals = train_true[target_col] - train_pred #new 11:35
 
         new_stats = pd.DataFrame({
             'model_name': [model_name],
