@@ -490,44 +490,17 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_true_normalized = minmax(train_true)
         test_true_normalized = minmax(test_true, train_true)
 
-        # st.write("Before Normalization - Train True:")
-        # st.write(train_true.min())
-        # st.write(train_true.max())
-        #
-        # st.write("Before Normalization - Test True:")
-        # st.write(test_true.min())
-        # st.write(test_true.max())
-
-        # train_true_normalized = minmax(train_true)
-        # test_true_normalized = minmax(test_true, train_true)
-        # #
-        # st.write("After Normalization - Train True:")
-        # st.write(train_true_normalized.min())
-        # st.write(train_true_normalized.max())
-        # st.write("After Normalization - Test True:")
-        # st.write(test_true_normalized.min())
-        # st.write(test_true_normalized.max())
-
         X_train = np.arange(len(train_true)).reshape(-1, 1)
         X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
 
         train_pred_normalized = result.predict(X_train)
         test_pred_normalized = result.predict(X_test)
 
-        # st.write("Train Predicted Norm:")
-        # st.write(train_pred_normalized)
-        # st.write("Test Predicted Norm:")
-        # st.write(test_pred_normalized)
-
         residuals = train_true_normalized - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true)
         test_pred = minmax_rev(test_pred_normalized, train_true)
 
-        # st.write("Train Predicted:")
-        # st.write(train_pred)
-        # st.write("Test Predicted:")
-        # st.write(test_pred)
 
     elif model_type == 'ExponentialModel':
         train_true_normalized = minmax(train_true)
@@ -784,16 +757,20 @@ class TimeSeriesAnalyzer:
             valid_size = train_size + int(len(self.data) * 0.2)
             train_data_raw = self.data[:train_size]
             valid_data_raw = self.data[train_size:valid_size]
+
+            combined_data_raw = self.data[:valid_size]  # new 10:55
             test_data_raw = self.data[valid_size:]
-            combined_data_raw = self.data[train_size:] #new 10:55
 
-            # train_data = minmax(combined_data_raw)
-            # test_data = minmax(test_data_raw, combined_data_raw)
+            # train_data = minmax(train_data_raw)
+            # valid_data = minmax(valid_data_raw, train_data_raw)
+            # test_data = minmax(test_data_raw, train_data_raw)
+            #combined_data_normalized = pd.concat([train_data, valid_data])
 
-            train_data = minmax(train_data_raw)
-            valid_data = minmax(valid_data_raw, train_data_raw)
-            test_data = minmax(test_data_raw, train_data_raw)
-            combined_data_normalized = pd.concat([train_data, valid_data])
+            #new 11:15
+            train_data = minmax(combined_data_raw)
+            valid_data = minmax(valid_data_raw, combined_data_raw)
+            test_data = minmax(test_data_raw, combined_data_raw)
+            combined_data_normalized = minmax(combined_data_raw)
 
             if model_name == 'ETS':
                 possible_trends = ['add', 'mul', None] if self.features['trend'] else [None]
