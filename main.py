@@ -826,8 +826,8 @@ class TimeSeriesAnalyzer:
                 best_sarima_model = SARIMAX(combined_data_normalized, order=best_order,
                                             seasonal_order=best_seasonal_order)
                 best_sarima_model_res = best_sarima_model.fit()
-                # model_stats(train_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA')
-                model_stats(combined_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA') #new 11:50
+                model_stats(train_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA')
+                #model_stats(combined_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA') #new 11:50
 
             elif model_name == 'ARIMA':
                 max_p = 5
