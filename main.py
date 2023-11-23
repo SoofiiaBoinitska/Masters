@@ -758,6 +758,7 @@ class TimeSeriesAnalyzer:
             train_data_raw = self.data[:train_size]
             valid_data_raw = self.data[train_size:valid_size]
             test_data_raw = self.data[valid_size:]
+            combined_data = pd.concat([train_data_raw, valid_data_raw]) #new
 
             train_data = minmax(train_data_raw)
             valid_data = minmax(valid_data_raw, train_data_raw)
@@ -856,14 +857,9 @@ class TimeSeriesAnalyzer:
 
             elif model_name == 'LinearRegression':
                 model = LinearRegression()
-                train_data_normalized = minmax(train_data_raw)
-                test_data_normalized = minmax(test_data_raw, train_data_raw)
-                X_train = np.arange(len(train_data_raw)).reshape(-1, 1)
-                X_test = np.arange(len(train_data_raw), len(train_data_raw) + len(test_data_raw)).reshape(-1, 1)
-                fitted = model.fit(X_train, train_data_normalized)
-                #X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
-                #fitted = model.fit(X, combined_data_normalized)
-                model_stats(train_data_raw, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
+                X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
+                fitted = model.fit(X, combined_data_normalized)
+                model_stats(combined_data, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
 
             elif model_name == 'PolynomialRegression':
                 X_train = np.arange(len(train_data)).reshape(-1, 1)
