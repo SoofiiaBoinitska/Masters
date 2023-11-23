@@ -857,7 +857,9 @@ class TimeSeriesAnalyzer:
             elif model_name == 'LinearRegression':
                 model = LinearRegression()
                 X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
-                fitted = model.fit(X, combined_data_normalized)
+                X_normalized = minmax(X) #new
+                fitted = model.fit(X_normalized, combined_data_normalized) #new
+                #fitted = model.fit(X, combined_data_normalized)
                 model_stats(train_data_raw, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
 
             elif model_name == 'PolynomialRegression':
