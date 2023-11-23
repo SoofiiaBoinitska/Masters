@@ -490,14 +490,11 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_true_normalized = minmax(train_true)
         test_true_normalized = minmax(test_true, train_true)
 
-        # CHANGE 23/11
-        # X_train = np.arange(len(train_true)).reshape(-1, 1)
-        # X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
-        X_train_normalized = np.arange(len(train_true_normalized)).reshape(-1, 1)
-        X_test_normalized = np.arange(len(train_true_normalized), len(train_true_normalized) + len(test_true_normalized)).reshape(-1, 1)
+        X_train = np.arange(len(train_true)).reshape(-1, 1)
+        X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
 
-        train_pred_normalized = result.predict(X_train_normalized) #CHANGE 23/11
-        test_pred_normalized = result.predict(X_test_normalized) #CHANGE 23/11
+        train_pred_normalized = result.predict(X_train)
+        test_pred_normalized = result.predict(X_test)
 
         residuals = train_true_normalized - train_pred_normalized
 
@@ -860,7 +857,8 @@ class TimeSeriesAnalyzer:
             elif model_name == 'LinearRegression':
                 model = LinearRegression()
                 X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
-                fitted = model.fit(X, combined_data_normalized)
+                #fitted = model.fit(X, combined_data_normalized)
+                fitted = model.fit(combined_data_normalized, X)
                 model_stats(train_data_raw, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
 
             elif model_name == 'PolynomialRegression':
