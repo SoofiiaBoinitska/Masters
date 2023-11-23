@@ -445,7 +445,9 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
 
         elif model_type == 'SARIMA':
             start_point = max(p + d + q, P + D + Q + s - 1)
-            train_true_reduced = train_true[start_point:]
+            #train_true_reduced = train_true[start_point:]
+            train_true_reduced = train_true_normalized[start_point:] #new 12:00
+
             train_pred_normalized = result.predict(start=start_point, end=len(train_true) - 1, typ='levels')
             train_pred = minmax_rev(train_pred_normalized, train_true)
             r2_val = r2_score(train_true[start_point:], train_pred)
