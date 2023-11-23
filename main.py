@@ -526,8 +526,8 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_pred_normalized = result.predict(X_train_normalized)
         test_pred_normalized = result.predict(X_test_normalized)
 
-        #residuals = train_true[target_col] - train_pred_normalized
-        residuals = X_train_normalized - train_pred_normalized
+        residuals = train_true[target_col] - train_pred_normalized
+        #residuals = X_train_normalized - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true[target_col])
         test_pred = minmax_rev(test_pred_normalized, train_true[target_col])
@@ -857,8 +857,7 @@ class TimeSeriesAnalyzer:
             elif model_name == 'LinearRegression':
                 model = LinearRegression()
                 X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
-                #fitted = model.fit(X, combined_data_normalized)
-                fitted = model.fit(combined_data_normalized, X)
+                fitted = model.fit(X, combined_data_normalized)
                 model_stats(train_data_raw, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
 
             elif model_name == 'PolynomialRegression':
