@@ -569,11 +569,17 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
 
     if model_type in ['AutoReg', 'MovingAverage', 'ARIMA', 'SARIMA']:
         plt.figure(figsize=(18, 6), dpi=200)
-        sns.lineplot(x=np.arange(len(train_true_reduced)), y=train_true_reduced, color='blue', label='Train True')
-        sns.lineplot(x=np.arange(len(train_true_reduced)), y=train_pred, color='orange', label='Train Predicted')
-        sns.lineplot(x=np.arange(len(train_true_reduced), len(train_true_reduced) + len(test_true)), y=test_true_normalized,
+        # sns.lineplot(x=np.arange(len(train_true_reduced)), y=train_true_reduced, color='blue', label='Train True')
+        # sns.lineplot(x=np.arange(len(train_true_reduced)), y=train_pred, color='orange', label='Train Predicted')
+        # sns.lineplot(x=np.arange(len(train_true_reduced), len(train_true_reduced) + len(test_true)), y=test_true,
+        #              color='green', label='Test True')
+        # sns.lineplot(x=np.arange(len(train_true_reduced), len(train_true_reduced) + len(test_true)), y=test_pred,
+        #              color='red', label='Test Predicted')
+        sns.lineplot(x=np.arange(len(train_true)), y=train_true, color='blue', label='Train True')
+        sns.lineplot(x=np.arange(len(train_true)), y=train_pred, color='orange', label='Train Predicted')
+        sns.lineplot(x=np.arange(len(train_true), len(train_true) + len(test_true)), y=test_true,
                      color='green', label='Test True')
-        sns.lineplot(x=np.arange(len(train_true_reduced), len(train_true_reduced) + len(test_true)), y=test_pred,
+        sns.lineplot(x=np.arange(len(train_true), len(train_true) + len(test_true)), y=test_pred,
                      color='red', label='Test Predicted')
         plt.title(f"Performance of {model_type} Model")
         st.pyplot(plt)
