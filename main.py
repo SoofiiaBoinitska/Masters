@@ -527,8 +527,8 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_pred_normalized = result.predict(X_train_normalized)
         test_pred_normalized = result.predict(X_test_normalized)
 
-        residuals = train_true[target_col] - train_pred_normalized
-        #residuals = X_train_normalized - train_pred_normalized
+        #residuals = train_true[target_col] - train_pred_normalized #new 11:30
+        residuals = X_train_normalized - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true[target_col])
         test_pred = minmax_rev(test_pred_normalized, train_true[target_col])
@@ -811,6 +811,7 @@ class TimeSeriesAnalyzer:
                 model_stats(train_data_raw, test_data_raw, best_ets_model_res, model_description, model_type='ETS')
 
             elif model_name == 'SARIMA':
+                combined_data_normalized = minmax(combined_data_raw)
                 max_q = 4
                 max_Q = 4
                 max_d = 2
@@ -826,6 +827,7 @@ class TimeSeriesAnalyzer:
                             f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA')
 
             elif model_name == 'ARIMA':
+                combined_data_normalized = minmax(combined_data_raw)
                 max_p = 5
                 max_q = 5
                 max_d = 2
@@ -838,6 +840,7 @@ class TimeSeriesAnalyzer:
                             model_type='ARIMA')
 
             elif model_name == 'AutoReg':
+                combined_data_normalized = minmax(combined_data_raw)
                 max_p = 10
                 best_p, best_model_res = best_AR_order(train_data, valid_data, max_p)
 
@@ -848,6 +851,7 @@ class TimeSeriesAnalyzer:
                 # forecast_and_plot(f'AR({best_p})', combined_data_normalized, test_data_raw)
 
             elif model_name == 'MovingAverage':
+                combined_data_normalized = minmax(combined_data_raw)
                 max_q = 10
                 best_q, best_model_res = best_MA_order(train_data, valid_data, max_q)
                 best_ma_model = ARIMA(combined_data_normalized, order=(0, 0, best_q))
