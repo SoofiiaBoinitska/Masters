@@ -571,7 +571,7 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         plt.figure(figsize=(18, 6), dpi=200)
         sns.lineplot(x=np.arange(len(train_true_reduced)), y=train_true_reduced, color='blue', label='Train True')
         sns.lineplot(x=np.arange(len(train_true_reduced)), y=train_pred, color='orange', label='Train Predicted')
-        sns.lineplot(x=np.arange(len(train_true_reduced), len(train_true_reduced) + len(test_true)), y=test_true,
+        sns.lineplot(x=np.arange(len(train_true_reduced), len(train_true_reduced) + len(test_true)), y=test_true_normalized,
                      color='green', label='Test True')
         sns.lineplot(x=np.arange(len(train_true_reduced), len(train_true_reduced) + len(test_true)), y=test_pred,
                      color='red', label='Test Predicted')
