@@ -499,7 +499,7 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         st.write(test_true.max())
 
         train_true_normalized = minmax(train_true)
-        test_true_normalized = minmax(test_true, train_true_normalized)
+        test_true_normalized = minmax(test_true, train_true)
 
         st.write("After Normalization - Train True:")
         st.write(train_true_normalized.min())
@@ -786,12 +786,15 @@ class TimeSeriesAnalyzer:
             train_data_raw = self.data[:train_size]
             valid_data_raw = self.data[train_size:valid_size]
             test_data_raw = self.data[valid_size:]
-            combined_data = pd.concat([train_data_raw, valid_data_raw]) #new
+            combined_data_raw = self.data[train_size:] #new 10:55
 
-            train_data = minmax(train_data_raw)
-            valid_data = minmax(valid_data_raw, train_data_raw)
-            test_data = minmax(test_data_raw, train_data_raw)
-            combined_data_normalized = pd.concat([train_data, valid_data])
+            train_data = minmax(combined_data_raw)
+            test_data = minmax(test_data_raw, combined_data_raw)
+
+            # train_data = minmax(train_data_raw)
+            # valid_data = minmax(valid_data_raw, train_data_raw)
+            # test_data = minmax(test_data_raw, train_data_raw)
+            #combined_data_normalized = pd.concat([train_data, valid_data])
 
             if model_name == 'ETS':
                 possible_trends = ['add', 'mul', None] if self.features['trend'] else [None]
@@ -885,10 +888,15 @@ class TimeSeriesAnalyzer:
 
             elif model_name == 'LinearRegression':
                 model = LinearRegression()
-                X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
-                fitted = model.fit(X, combined_data_normalized)
-                #model_stats(combined_data, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
-                model_stats(train_data_raw, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression') #new 10:30
+                # X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
+                # fitted = model.fit(X, combined_data_normalized)
+                # #model_stats(combined_data, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
+                # model_stats(train_data_raw, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression') #new 10:30
+                #new 10:55
+
+                X = np.arange(len(train_data)).reshape(-1, 1)
+                fitted = model.fit(X, train_data)
+                model_stats(combined_data_raw, test_data_raw, fitted, 'LinearRegression', model_type='LinearRegression')
 
             elif model_name == 'PolynomialRegression':
                 X_train = np.arange(len(train_data)).reshape(-1, 1)
