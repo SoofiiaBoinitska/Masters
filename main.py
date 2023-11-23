@@ -491,12 +491,18 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         #test_true_normalized = minmax(test_true, train_true)
         st.write("Before Normalization - Train True:", train_true.min(), train_true.max())
         st.write("Before Normalization - Test True:", test_true.min(), test_true.max())
+        st.markdown("Before Normalization - Train True: Min={}, Max={}".format(train_true.min(), train_true.max()))
+        st.markdown("Before Normalization - Test True: Min={}, Max={}".format(test_true.min(), test_true.max()))
 
         train_true_normalized = minmax(train_true)
         test_true_normalized = minmax(test_true, train_true)
 
         st.write("After Normalization - Train True:", train_true_normalized.min(), train_true_normalized.max())
         st.write("After Normalization - Test True:", test_true_normalized.min(), test_true_normalized.max())
+        st.markdown("After Normalization - Train True: Min={}, Max={}".format(train_true_normalized.min(),
+                                                                              train_true_normalized.max()))
+        st.markdown("After Normalization - Test True: Min={}, Max={}".format(test_true_normalized.min(),
+                                                                             test_true_normalized.max()))
 
         X_train = np.arange(len(train_true)).reshape(-1, 1)
         X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
@@ -504,8 +510,8 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_pred_normalized = result.predict(X_train)
         test_pred_normalized = result.predict(X_test)
 
-        st.write("Train Predicted Norm:", train_pred_normalized)
-        st.write("Test Predicted Norm:", test_pred_normalized)
+        st.markdown("Train Predicted Norm:", train_pred_normalized)
+        st.markdown("Test Predicted Norm:", test_pred_normalized)
 
         residuals = train_true_normalized - train_pred_normalized
 
@@ -514,6 +520,8 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
 
         st.write("Train Predicted:", train_pred)
         st.write("Test Predicted:", test_pred)
+        st.markdown("Train Predicted:", train_pred)
+        st.markdown("Test Predicted:", test_pred)
 
     elif model_type == 'ExponentialModel':
         train_true_normalized = minmax(train_true)
