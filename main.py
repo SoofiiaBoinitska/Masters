@@ -298,7 +298,8 @@ def determine_polynomial_degree(X_train, y_train, X_val, y_val, max_degree=4):
 
     return best_degree
 
-def detect_trend(ts, alpha=0.005, trend_type='linear', r2_threshold=0.6):
+#def detect_trend(ts, alpha=0.005, trend_type='linear', r2_threshold=0.6): CHANGE 23/11
+def detect_trend(ts, alpha=0.001, trend_type='linear', r2_threshold=0.8):
     n = len(ts)
     X = np.column_stack((np.ones(n), np.arange(n)))
     ts = np.array(ts)
@@ -397,7 +398,7 @@ def rolling_forecast_sarima(train_data, test_data, order, seasonal_order, exog_o
         history.append(test_data[t])
     return predictions
 
-results_df = pd.DataFrame(columns=['model_name', 'R^2', 'SUM(e(k)^2)', 'DW', 'MSE', 'RMSE', 'MAE', 'U', 'model_object'])
+#results_df = pd.DataFrame(columns=['model_name', 'R^2', 'SUM(e(k)^2)', 'DW', 'MSE', 'RMSE', 'MAE', 'U', 'model_object']) #CHANGE 23/11
 
 def u_coef(y_true, y_pred):
     return mse(y_true, y_pred) ** 1 / 2 / (norm(y_true) + norm(y_pred))
@@ -615,10 +616,14 @@ class TimeSeriesAnalyzer:
             decomposition = seasonal_decompose(self.data)
             seasonal_component = decomposition.seasonal
             residuals = decomposition.resid.dropna()
+
+            # CHANGE 23/11
             iqr = seasonal_component.quantile(0.75) - seasonal_component.quantile(0.25)
             seasonality_strength = iqr / seasonal_component.std()
-            self.features['strong_seasonality'] = seasonality_strength > 0.64
-            self.features['weak_seasonality'] = 0 < seasonality_strength <= 0.64
+            # self.features['strong_seasonality'] = seasonality_strength > 0.64
+            # self.features['weak_seasonality'] = 0 < seasonality_strength <= 0.64
+            self.features['strong_seasonality'] = seasonality_strength > 0.8
+            self.features['weak_seasonality'] = 0.2 < seasonality_strength <= 0.8
 
             n = len(self.data)
             threshold = 1.645 / np.sqrt(n)
@@ -654,7 +659,12 @@ class TimeSeriesAnalyzer:
 
             self.features['long_series'] = len(self.data) > 1000  # TODO adjust threshold
 
-            self.features['volatile'] = self.data.pct_change().std() > 0.05  # TODO adjust threshold
+            #CHANGE 23 / 11
+            max_value = np.max(self.data)
+            volatility_threshold = 0.01 * max_value
+            self.features['volatile'] = self.data.pct_change().std() > volatility_threshold
+            #self.features['volatile'] = self.data.pct_change().std() > 0.05  # TODO adjust threshold
+
 
             rolling_mean = self.data.rolling(window=12).mean()
             self.features['change_points'] = (
@@ -692,7 +702,7 @@ class TimeSeriesAnalyzer:
                     self.features['has_complex_feature']
                     or self.features['significant_noise']
                     or self.features['correlation']
-                    or self.features['stochastic_trend']
+                    #or self.features['stochastic_trend'] CHANGE 23/11
                     or sum(self.features.values()) > 10):  # Adjust threshold
                 self.potential_models.add('ETS')
 
@@ -955,18 +965,24 @@ class TimeSeriesAnalyzer:
             self.analyze_features()
             st.write("Features analyzed successfully.\n")
 
+
+
             with st.expander("Features"):
                 for feature, value in self.features.items():
                     if value:
                         st.write(f"{feature}")
-            results_df = pd.DataFrame(columns=['model_name', 'R^2', 'SUM(e(k)^2)', 'DW', 'MSE', 'RMSE', 'MAE', 'U', 'model_object'])
+
             st.subheader("\nSelecting Potential Models...")
             potential_models = self.select_models()
             st.markdown("**Selected Models:**")
             for model in potential_models:
                 st.text(f"- {model}")
             st.subheader("\nTraining & Validating Models...")
+
             results = []
+            results_df = pd.DataFrame(
+                columns=['model_name', 'R^2', 'SUM(e(k)^2)', 'DW', 'MSE', 'RMSE', 'MAE', 'U', 'model_object'])
+
             for model_name in potential_models:
                 st.markdown(f"<span style='color: blue; font-weight: bold;'>Processing {model_name}...</span>", unsafe_allow_html=True)
                 with st.expander(f"{model_name}", expanded=False):
