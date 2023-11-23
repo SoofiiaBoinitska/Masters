@@ -490,11 +490,14 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_true_normalized = minmax(train_true)
         test_true_normalized = minmax(test_true, train_true)
 
-        X_train = np.arange(len(train_true)).reshape(-1, 1)
-        X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
+        # CHANGE 23/11
+        # X_train = np.arange(len(train_true)).reshape(-1, 1)
+        # X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
+        X_train_normalized = np.arange(len(train_true)).reshape(-1, 1)
+        X_test_normalized  = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
 
-        train_pred_normalized = result.predict(X_train)
-        test_pred_normalized = result.predict(X_test)
+        train_pred_normalized = result.predict(X_train_normalized) #CHANGE 23/11
+        test_pred_normalized = result.predict(X_test_normalized) #CHANGE 23/11
 
         residuals = train_true_normalized - train_pred_normalized
 
@@ -617,13 +620,16 @@ class TimeSeriesAnalyzer:
             seasonal_component = decomposition.seasonal
             residuals = decomposition.resid.dropna()
 
+            adf_result = adfuller(residuals)
+            p_value = adf_result[1]
+            is_seasonal = p_value <= 0.05
+
+            if is_seasonal:
             # CHANGE 23/11
-            iqr = seasonal_component.quantile(0.75) - seasonal_component.quantile(0.25)
-            seasonality_strength = iqr / seasonal_component.std()
-            # self.features['strong_seasonality'] = seasonality_strength > 0.64
-            # self.features['weak_seasonality'] = 0 < seasonality_strength <= 0.64
-            self.features['strong_seasonality'] = seasonality_strength > 0.8
-            self.features['weak_seasonality'] = 0.2 < seasonality_strength <= 0.8
+                iqr = seasonal_component.quantile(0.75) - seasonal_component.quantile(0.25)
+                seasonality_strength = iqr / seasonal_component.std()
+                self.features['strong_seasonality'] = seasonality_strength > 0.64
+                self.features['weak_seasonality'] = 0 < seasonality_strength <= 0.64
 
             n = len(self.data)
             threshold = 1.645 / np.sqrt(n)
@@ -961,11 +967,15 @@ class TimeSeriesAnalyzer:
                 st.write("No summary method for this model.")
 
         def run_analysis(self):
+            global results_df  #CHANGE 23/11
+
             st.subheader("Analyzing Features...")
             self.analyze_features()
             st.write("Features analyzed successfully.\n")
 
-
+            results = []
+            results_df = pd.DataFrame(
+                columns=['model_name', 'R^2', 'SUM(e(k)^2)', 'DW', 'MSE', 'RMSE', 'MAE', 'U', 'model_object'])
 
             with st.expander("Features"):
                 for feature, value in self.features.items():
@@ -978,10 +988,6 @@ class TimeSeriesAnalyzer:
             for model in potential_models:
                 st.text(f"- {model}")
             st.subheader("\nTraining & Validating Models...")
-
-            results = []
-            results_df = pd.DataFrame(
-                columns=['model_name', 'R^2', 'SUM(e(k)^2)', 'DW', 'MSE', 'RMSE', 'MAE', 'U', 'model_object'])
 
             for model_name in potential_models:
                 st.markdown(f"<span style='color: blue; font-weight: bold;'>Processing {model_name}...</span>", unsafe_allow_html=True)
