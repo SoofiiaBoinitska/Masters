@@ -489,8 +489,9 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
     elif model_type in ['LinearRegression', 'PolynomialRegression']:
         #train_true_normalized = minmax(train_true)
         #test_true_normalized = minmax(test_true, train_true)
-        st.write("Before Normalization - Train True:", train_true.min(), train_true.max())
-        st.write("Before Normalization - Test True:", test_true.min(), test_true.max())
+        st.write(train_true.min())
+        st.write(train_true.max())
+        st.write(test_true.min(), test_true.max())
         st.markdown("Before Normalization - Train True: Min={}, Max={}".format(train_true.min(), train_true.max()))
         st.markdown("Before Normalization - Test True: Min={}, Max={}".format(test_true.min(), test_true.max()))
 
