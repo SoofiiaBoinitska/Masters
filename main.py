@@ -493,13 +493,14 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         # CHANGE 23/11
         # X_train = np.arange(len(train_true)).reshape(-1, 1)
         # X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
-        X_train_normalized = np.arange(len(train_true)).reshape(-1, 1)
-        X_test_normalized  = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
+        X_train_normalized = np.arange(len(train_true_normalized)).reshape(-1, 1)
+        X_test_normalized = np.arange(len(train_true_normalized), len(train_true_normalized) + len(test_true_normalized)).reshape(-1, 1)
 
         train_pred_normalized = result.predict(X_train_normalized) #CHANGE 23/11
         test_pred_normalized = result.predict(X_test_normalized) #CHANGE 23/11
 
-        residuals = train_true_normalized - train_pred_normalized
+        #residuals = train_true_normalized - train_pred_normalized
+        residuals = train_true - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true)
         test_pred = minmax_rev(test_pred_normalized, train_true)
