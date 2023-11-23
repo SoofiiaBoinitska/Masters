@@ -757,20 +757,14 @@ class TimeSeriesAnalyzer:
             valid_size = train_size + int(len(self.data) * 0.2)
             train_data_raw = self.data[:train_size]
             valid_data_raw = self.data[train_size:valid_size]
-
-            combined_data_raw = self.data[:valid_size]  # new 10:55
             test_data_raw = self.data[valid_size:]
 
-            # train_data = minmax(train_data_raw)
-            # valid_data = minmax(valid_data_raw, train_data_raw)
-            # test_data = minmax(test_data_raw, train_data_raw)
-            #combined_data_normalized = pd.concat([train_data, valid_data])
+            combined_data_raw = self.data[:valid_size]  # new 10:55
 
-            #new 11:15
-            train_data = minmax(combined_data_raw)
-            valid_data = minmax(valid_data_raw, combined_data_raw)
-            test_data = minmax(test_data_raw, combined_data_raw)
-            combined_data_normalized = minmax(combined_data_raw)
+            train_data = minmax(train_data_raw)
+            valid_data = minmax(valid_data_raw, train_data_raw)
+            test_data = minmax(test_data_raw, train_data_raw)
+            combined_data_normalized = pd.concat([train_data, valid_data])
 
             if model_name == 'ETS':
                 possible_trends = ['add', 'mul', None] if self.features['trend'] else [None]
@@ -863,6 +857,11 @@ class TimeSeriesAnalyzer:
                             model_type='MovingAverage')
 
             elif model_name == 'LinearRegression':
+                train_data = minmax(combined_data_raw)
+                valid_data = minmax(valid_data_raw, combined_data_raw)
+                test_data = minmax(test_data_raw, combined_data_raw)
+                combined_data_normalized = minmax(combined_data_raw)
+
                 model = LinearRegression()
                 X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
                 fitted = model.fit(X, combined_data_normalized)
@@ -883,12 +882,14 @@ class TimeSeriesAnalyzer:
                             model_type='PolynomialRegression')
 
             elif model_name == 'ExponentialModel':
+                combined_data_normalized = minmax(combined_data_raw)
+
                 train_log = np.log1p(combined_data_normalized)
                 model = LinearRegression()
                 X = np.arange(len(combined_data_normalized)).reshape(-1, 1)
                 fitted = model.fit(X, train_log)
-                metrics = model_stats(train_data_raw, test_data_raw, fitted, 'ExponentialModel',
-                                      model_type='ExponentialModel')
+                #model_stats(train_data_raw, test_data_raw, fitted, 'ExponentialModel', model_type='ExponentialModel')
+                model_stats(combined_data_raw, test_data_raw, fitted, 'ExponentialModel', model_type='ExponentialModel')
 
             elif model_name == 'GradientBoosting':
                 combined_data_fe = feature_engineering(combined_data_normalized.copy())
