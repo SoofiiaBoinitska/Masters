@@ -487,26 +487,26 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         test_pred = minmax_rev(test_pred_normalized, train_true)
 
     elif model_type in ['LinearRegression', 'PolynomialRegression']:
-        #train_true_normalized = minmax(train_true)
-        #test_true_normalized = minmax(test_true, train_true)
-
-        st.write("Before Normalization - Train True:")
-        st.write(train_true.min())
-        st.write(train_true.max())
-
-        st.write("Before Normalization - Test True:")
-        st.write(test_true.min())
-        st.write(test_true.max())
-
         train_true_normalized = minmax(train_true)
         test_true_normalized = minmax(test_true, train_true)
 
-        st.write("After Normalization - Train True:")
-        st.write(train_true_normalized.min())
-        st.write(train_true_normalized.max())
-        st.write("After Normalization - Test True:")
-        st.write(test_true_normalized.min())
-        st.write(test_true_normalized.max())
+        # st.write("Before Normalization - Train True:")
+        # st.write(train_true.min())
+        # st.write(train_true.max())
+        #
+        # st.write("Before Normalization - Test True:")
+        # st.write(test_true.min())
+        # st.write(test_true.max())
+
+        # train_true_normalized = minmax(train_true)
+        # test_true_normalized = minmax(test_true, train_true)
+        # #
+        # st.write("After Normalization - Train True:")
+        # st.write(train_true_normalized.min())
+        # st.write(train_true_normalized.max())
+        # st.write("After Normalization - Test True:")
+        # st.write(test_true_normalized.min())
+        # st.write(test_true_normalized.max())
 
         X_train = np.arange(len(train_true)).reshape(-1, 1)
         X_test = np.arange(len(train_true), len(train_true) + len(test_true)).reshape(-1, 1)
@@ -514,20 +514,20 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_pred_normalized = result.predict(X_train)
         test_pred_normalized = result.predict(X_test)
 
-        st.write("Train Predicted Norm:")
-        st.write(train_pred_normalized)
-        st.write("Test Predicted Norm:")
-        st.write(test_pred_normalized)
+        # st.write("Train Predicted Norm:")
+        # st.write(train_pred_normalized)
+        # st.write("Test Predicted Norm:")
+        # st.write(test_pred_normalized)
 
         residuals = train_true_normalized - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true)
         test_pred = minmax_rev(test_pred_normalized, train_true)
 
-        st.write("Train Predicted:")
-        st.write(train_pred)
-        st.write("Test Predicted:")
-        st.write(test_pred)
+        # st.write("Train Predicted:")
+        # st.write(train_pred)
+        # st.write("Test Predicted:")
+        # st.write(test_pred)
 
     elif model_type == 'ExponentialModel':
         train_true_normalized = minmax(train_true)
@@ -780,7 +780,6 @@ class TimeSeriesAnalyzer:
             return self.potential_models
 
         def train_and_validate(self, model_name):
-
             train_size = int(len(self.data) * 0.6)
             valid_size = train_size + int(len(self.data) * 0.2)
             train_data_raw = self.data[:train_size]
