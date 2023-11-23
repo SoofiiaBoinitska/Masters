@@ -813,25 +813,23 @@ class TimeSeriesAnalyzer:
                 model_stats(train_data_raw, test_data_raw, best_ets_model_res, model_description, model_type='ETS')
 
             elif model_name == 'SARIMA':
-                train_data = minmax(combined_data_raw)
-                valid_data = minmax(valid_data_raw, combined_data_raw)
-                test_data = minmax(test_data_raw, combined_data_raw)
-                combined_data_normalized = minmax(combined_data_raw)
+                # train_data = minmax(combined_data_raw)
+                # valid_data = minmax(valid_data_raw, combined_data_raw)
+                # test_data = minmax(test_data_raw, combined_data_raw)
+                # combined_data_normalized = minmax(combined_data_raw)
                 max_q = 4
                 max_Q = 4
                 max_d = 2
 
-                #best_order, best_seasonal_order, best_model_res = best_SARIMA_order(train_data, valid_data, max_d, max_q, max_Q)
-                best_order, best_seasonal_order, best_model_res = best_SARIMA_order(train_data, valid_data, max_d, max_q, max_Q) #new 11:35
+                best_order, best_seasonal_order, best_model_res = best_SARIMA_order(train_data, valid_data, max_d, max_q, max_Q)
 
                 best_sarima_model = SARIMAX(combined_data_normalized, order=best_order,
                                             seasonal_order=best_seasonal_order)
                 best_sarima_model_res = best_sarima_model.fit()
-                #model_stats(train_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA')
-                model_stats(combined_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA') #new 11:35
+                # model_stats(train_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA')
+                model_stats(combined_data_raw, test_data_raw, best_sarima_model_res, f'SARIMA{best_order}x{best_seasonal_order}', model_type='SARIMA') #new 11:50
 
             elif model_name == 'ARIMA':
-                combined_data_normalized = minmax(combined_data_raw)
                 max_p = 5
                 max_q = 5
                 max_d = 2
@@ -844,7 +842,6 @@ class TimeSeriesAnalyzer:
                             model_type='ARIMA')
 
             elif model_name == 'AutoReg':
-                combined_data_normalized = minmax(combined_data_raw)
                 max_p = 10
                 best_p, best_model_res = best_AR_order(train_data, valid_data, max_p)
 
@@ -855,7 +852,6 @@ class TimeSeriesAnalyzer:
                 # forecast_and_plot(f'AR({best_p})', combined_data_normalized, test_data_raw)
 
             elif model_name == 'MovingAverage':
-                combined_data_normalized = minmax(combined_data_raw)
                 max_q = 10
                 best_q, best_model_res = best_MA_order(train_data, valid_data, max_q)
                 best_ma_model = ARIMA(combined_data_normalized, order=(0, 0, best_q))
