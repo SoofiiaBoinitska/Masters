@@ -499,8 +499,7 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_pred_normalized = result.predict(X_train_normalized) #CHANGE 23/11
         test_pred_normalized = result.predict(X_test_normalized) #CHANGE 23/11
 
-        #residuals = train_true_normalized - train_pred_normalized
-        residuals = train_true - train_pred_normalized
+        residuals = train_true_normalized - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true)
         test_pred = minmax_rev(test_pred_normalized, train_true)
@@ -530,7 +529,8 @@ def model_stats(train_true, test_true, result, model_name, model_type='ARIMA', e
         train_pred_normalized = result.predict(X_train_normalized)
         test_pred_normalized = result.predict(X_test_normalized)
 
-        residuals = train_true[target_col] - train_pred_normalized
+        #residuals = train_true[target_col] - train_pred_normalized
+        residuals = X_train_normalized - train_pred_normalized
 
         train_pred = minmax_rev(train_pred_normalized, train_true[target_col])
         test_pred = minmax_rev(test_pred_normalized, train_true[target_col])
